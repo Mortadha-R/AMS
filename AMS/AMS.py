@@ -152,7 +152,12 @@ def review_excuses(file_path):
         for line in lines:
             if "not reviewed" in line:
                 not_reviewed_excuses.append(line.strip())
-
+                
+        #Check that there are unreviewed excuses.
+        if not not_reviewed_excuses:
+            print("There are no unreviewed excuses.")
+            return
+            
         # Display not reviewed excuses
         print("Not reviewed excuses:")
         for i, excuse in enumerate(not_reviewed_excuses):
@@ -160,23 +165,30 @@ def review_excuses(file_path):
 
         # Prompt user for choice
         choice = int(input("Enter the index of the excuse you want to review: ")) - 1
-        selected_excuse = not_reviewed_excuses[choice]
-
-        # Ask for acceptance or rejection
-        decision = input(f"Is the excuse '{selected_excuse}' accepted or rejected? ").lower()
-
-        # Update the file
-        with open(file_path, 'w') as f:
-            for line in lines:
-                if selected_excuse in line:
-                    if decision == "accepted":
-                        f.write(line.replace("not reviewed", "accepted"))
-                    elif decision == "rejected":
-                        f.write(line.replace("not reviewed", "rejected"))
-                else:
-                    f.write(line)
-
-        print(f"Excuse '{selected_excuse}' has been {decision}.")
+        try:
+            selected_excuse = not_reviewed_excuses[choice]
+    
+            # Ask for acceptance or rejection
+            decision = input(f"Is the excuse '{selected_excuse}' accepted or rejected? ").lower()
+    
+            # Update the file
+            with open(file_path, 'w') as f:
+                for line in lines:
+                    if selected_excuse in line:
+                        if decision == "accepted":
+                            f.write(line.replace("not reviewed", "accepted"))
+                        elif decision == "rejected":
+                            f.write(line.replace("not reviewed", "rejected"))
+                        else:
+                            f.write(line)
+                    else:
+                        f.write(line)
+            if decision == "accepted" or decision == "rejected":
+                print(f"Excuse '{selected_excuse}' has been {decision}.")
+            else:
+                print("Invalid Choice the excuse has not been modified.")
+        except IndexError:
+            print("The selected excuse is not in the list.")
     except FileNotFoundError:
         print(f"File '{file_path}' not found.")
 
