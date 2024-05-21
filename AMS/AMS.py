@@ -1,5 +1,6 @@
 import os
 from json import loads
+from PIL import Image
 import tkinter as tk
 from tkinter import filedialog
 
@@ -226,6 +227,11 @@ def review_excuses(file_path):
             raise IndexError("Selected excuse index is out of range.")
 
         selected_excuse = not_reviewed_excuses[choice]
+        
+        excuse_parts = selected_excuse.split('|')
+        # Display excuse image
+        img_path = excuse_parts[3].split("File:")[1].strip()
+        Image.open(img_path).show()
 
         # Ask for acceptance or rejection
         decision = input(f"Is the excuse '{selected_excuse}' accepted or rejected? ").lower()
@@ -233,7 +239,6 @@ def review_excuses(file_path):
             raise ValueError("Invalid decision. Please enter 'accepted' or 'rejected'.")
 
         # Parse the excuse details
-        excuse_parts = selected_excuse.split('|')
         sender_id = excuse_parts[0].split(': ')[1].strip()
         section = excuse_parts[1].split(': ')[1].strip()
         lecture_index = int(excuse_parts[2].split(': ')[1].strip()) - 1
